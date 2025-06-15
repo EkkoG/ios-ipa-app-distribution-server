@@ -91,13 +91,17 @@ _upload_route_kwargs = {
 @router.post("/upload", **_upload_route_kwargs)
 def _plaintext_post_upload(
     app_file: UploadFile = File(description="An `.ipa` or `.apk` build"),
-) -> PlainTextResponse:
+) -> dict[str, str]:
     build_info = _upload_app(app_file)
-
-    return PlainTextResponse(
-        content=get_absolute_url(f"/get/{build_info.upload_id}"),
-    )
-
+    return {
+        "upload_id": build_info.upload_id,
+        "bundle_id": build_info.bundle_id,
+        "app_title": build_info.app_title,
+        "bundle_version": build_info.bundle_version,
+        "platform": build_info.platform,
+        "install_url": get_absolute_url(f"/get/{build_info.upload_id}"),
+        "latest_install_url": get_absolute_url(f"/{build_info.bundle_id}/latest"),
+    }
 
 @router.post("/api/upload", **_upload_route_kwargs)
 def _json_api_post_upload(

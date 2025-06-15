@@ -103,6 +103,7 @@ def _plaintext_post_upload(
         "latest_install_url": get_absolute_url(f"/{build_info.bundle_id}/latest"),
     }
 
+
 @router.post("/api/upload", **_upload_route_kwargs)
 def _json_api_post_upload(
     app_file: UploadFile = File(description="An `.ipa` or `.apk` build"),

@@ -3,6 +3,7 @@ from fastapi import HTTPException as FastApiHTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from app_distribution_server.routers.api_router import api_get_latest_upload_by_bundle_id
 
 from app_distribution_server.build_info import (
     Platform,
@@ -53,6 +54,19 @@ async def render_get_item_installation_page(
             "logo_url": LOGO_URL,
         },
     )
+
+@router.get(
+    "/{bundle_id}/latest",
+    response_class=HTMLResponse,
+    summary="Render the HTML installation page for the latest upload from a bundle ID",
+)
+async def render_get_latest_upload_by_bundle_id_page(
+    request: Request,
+    bundle_id: str,
+) -> HTMLResponse:
+    build_info = api_get_latest_upload_by_bundle_id(bundle_id)
+
+    return await render_get_item_installation_page(request, build_info.upload_id)
 
 
 async def render_error_page(
